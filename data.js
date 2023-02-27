@@ -14,19 +14,19 @@ export const tweetsData = [
     },    
     {
         handle: `@Elon ✅`,
-        profilePic: `images/musk.png`,
+        profilePic: new URL(`images/musk.png`, import.meta.url),
         likes: 6500,
         retweets: 234,
         tweetText: `I need volunteers for a one-way mission to Mars 🪐. No experience necessary🚀`,
         replies: [
                   {
                 handle: `@TomCruise ✅`,
-                profilePic: `images/tcruise.png`,
+                profilePic: new URL(`images/tcruise.png`, import.meta.url),
                 tweetText: `Yes! Sign me up! 😎🛩`,
             },
                   {
                 handle: `@ChuckNorris ✅`,
-                profilePic: `images/chucknorris.jpeg`,
+                profilePic: new URL(`images/chucknorris.jpeg`, import.meta.url),
                 tweetText: `I went last year😴`,
             },
         ],
@@ -37,19 +37,19 @@ export const tweetsData = [
     },
         {
         handle: `@NoobCoder12`,
-        profilePic: `images/flower.png`,
+        profilePic: new URL(`images/flower.png`, import.meta.url),
         likes: 10,
         retweets: 3,
         tweetText: `Are you a coder if you only know HTML?`,
         replies: [
             {
                 handle: `@StackOverflower ☣️`,
-                profilePic: `images/overflow.png`,
+                profilePic: new URL(`images/overflow.png`, import.meta.url),
                 tweetText: `No. Obviosuly not. Go get a job in McDonald's.`,
             },
             {
                 handle: `@YummyCoder64`,
-                profilePic: `images/love.png`,
+                profilePic: new URL(`images/love.png`, import.meta.url),
                 tweetText: `You are wonderful just as you are! ❤️`,
             },
         ],

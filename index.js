@@ -70,13 +70,13 @@ function handleTweetBtnClick(){
         if(targetTweetObj){
         targetTweetObj.replies.push({
             handle: `@Scrimba`,
-            profilePic: `images/scrimbalogo.png`,
+            profilePic: new URL(`images/scrimbalogo.png`, import.meta.url),
             tweetText: tweetInput.value,
         })
     } else {
         localData.unshift({
             handle: `@Scrimba`,
-            profilePic: `images/scrimbalogo.png`,
+            profilePic: new URL(`images/scrimbalogo.png`, import.meta.url),
             likes: 0,
             retweets: 0,
             tweetText: tweetInput.value,
