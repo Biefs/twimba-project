@@ -20,13 +20,17 @@ document.addEventListener('click', function(e){
     }
     else if(e.target.id === 'tweet-btn'){
         handleTweetBtnClick()
-    } else if (e.target.dataset.tweet){
-        handleTweetClick(e.target.dataset.tweet)
     } else if (e.target.dataset.deleteBtn){
-        handleDeleteClick(e.target.dataset.deleteBtn)
+        handleDeleteTweetClick(e.target.dataset.deleteBtn)
+    } else if (e.target.dataset.replyBtn){
+        handleReplyInputClick(e.target.dataset.replyBtn)
+    } else if (e.target.dataset.deleteReplyBtn){
+        handleDeleteReplyClick(e.target.dataset.deleteReplyBtn)
     }
 })
  
+
+
 function handleLikeClick(tweetId){ 
     const targetTweetObj = localData.filter(function(tweet){
         return tweet.uuid === tweetId
@@ -63,17 +67,7 @@ function handleReplyClick(replyId){
 
 function handleTweetBtnClick(){
     const tweetInput = document.getElementById('tweet-input')
-    const targetTweetObj = localData.filter(function(tweet){
-        return tweet.isSelected 
-    })[0]
-    if(tweetInput.value){
-        if(targetTweetObj){
-        targetTweetObj.replies.push({
-            handle: `@Scrimba`,
-            profilePic: new URL(`images/scrimbalogo.png`, import.meta.url),
-            tweetText: tweetInput.value,
-        })
-    } else {
+    if(!tweetInput.value) {return}
         localData.unshift({
             handle: `@Scrimba`,
             profilePic: new URL(`images/scrimbalogo.png`, import.meta.url),
@@ -83,34 +77,52 @@ function handleTweetBtnClick(){
             replies: [],
             isLiked: false,
             isRetweeted: false,
-            isSelected: false,
             isMyTweet: true,
             uuid: uuidv4()
         })
-    }
-    }
     
     tweetInput.value = ''
     render()
 }
 
-function handleTweetClick(tweetId){
-    const targetTweetObj = localData.filter(function(tweet){
-        return tweet.uuid === tweetId
-    })[0]
-    localData.forEach(tweet => {
-        if(tweet.uuid === tweetId) {
-            tweet.isSelected = !targetTweetObj.isSelected
-        } else tweet.isSelected = false
-        
-    })
-    render()
-}
 
-function handleDeleteClick(tweetId){
+function handleDeleteTweetClick(tweetId){
    localData.splice(localData.findIndex(tweet => tweet.uuid === tweetId), 1)  
     render()
 }
+
+
+function handleDeleteReplyClick(replyId){
+    localData.forEach(tweet => {
+      return tweet.replies.splice(tweet.replies.findIndex(reply => reply.id === replyId), 1)
+    })
+    render()
+ }
+
+function handleReplyInputClick(tweetId){
+    const replyInput = document.querySelector(`[data-text-reply="${tweetId}"]`)
+    const targetTweetObj = localData.filter(function(tweet){
+        return tweet.uuid === tweetId
+    })[0]
+    
+    if(replyInput.value){
+        if(targetTweetObj){
+        targetTweetObj.replies.push({
+            handle: `@Scrimba`,
+            profilePic: new URL(`images/scrimbalogo.png`, import.meta.url),
+            tweetText: replyInput.value,
+            isMyReply: true,
+            id: uuidv4()
+        })
+    }}
+    
+    render()
+    document.getElementById(`replies-${tweetId}`).classList.remove('hidden')
+}
+
+
+
+
 
 function getFeedHtml(){
     let feedHtml = ``
@@ -118,7 +130,8 @@ function getFeedHtml(){
     localData.forEach(function(tweet){
         
         let likeIconClass = ''
-        let deleteBtn = ''
+        let deleteTweetBtn = ''
+        let deleteReplyBtn = ''
 
         if (tweet.isLiked){
             likeIconClass = 'liked'
@@ -130,7 +143,6 @@ function getFeedHtml(){
             retweetIconClass = 'retweeted'
         }
         
-        let selectedClass = ''
         
         if(tweet.isSelected){
             selectedClass = 'selected'
@@ -141,12 +153,21 @@ function getFeedHtml(){
         
         if(tweet.replies.length > 0){
             tweet.replies.forEach(function(reply){
+                if(reply.isMyReply){
+                    deleteReplyBtn = `
+                    <span class="delete-btn" data-delete-reply-btn="${reply.id}">Delete tweet</span>
+                    `
+                } else deleteReplyBtn = ``
+
                 repliesHtml+=`
 <div class="tweet-reply">
     <div class="tweet-inner">
         <img src="${reply.profilePic}" class="profile-pic">
             <div>
+                <div class="container">
                 <p class="handle">${reply.handle}</p>
+                ${deleteReplyBtn}
+                </div>
                 <p class="tweet-text">${reply.tweetText}</p>
             </div>
         </div>
@@ -156,10 +177,10 @@ function getFeedHtml(){
         }
         
         if(tweet.isMyTweet){
-            deleteBtn = `
+            deleteTweetBtn = `
             <span class="delete-btn" data-delete-btn="${tweet.uuid}">Delete tweet</span>
             `
-        } else deleteBtn = ``
+        } else deleteTweetBtn = ``
           
         feedHtml += `
 <div class="tweet">
@@ -167,8 +188,8 @@ function getFeedHtml(){
         <img src="${tweet.profilePic}" class="profile-pic">
         <div>
         <div class="container">
-            <p class="handle ${selectedClass}" data-tweet="${tweet.uuid}">${tweet.handle}</p>
-            ${deleteBtn}
+            <p class="handle" >${tweet.handle}</p>
+            ${deleteTweetBtn}
         </div>
             <p class="tweet-text">${tweet.tweetText}</p>
             <div class="tweet-details">
@@ -195,6 +216,11 @@ function getFeedHtml(){
     </div>
     <div class="hidden" id="replies-${tweet.uuid}">
         ${repliesHtml}
+        <div class="reply-input-area">
+			<img src="images/scrimbalogo.png" class="profile-pic">
+			<textarea data-text-reply="${tweet.uuid}" placeholder="Tweet your reply" class="reply-input"></textarea>
+            <button data-reply-btn="${tweet.uuid}" class="reply-btn">Reply</button>
+		</div>
     </div>   
 </div>
 `
