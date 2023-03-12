@@ -217,7 +217,7 @@ function getFeedHtml(){
     <div class="hidden" id="replies-${tweet.uuid}">
         ${repliesHtml}
         <div class="reply-input-area">
-			<img src="images/scrimbalogo.png" class="profile-pic">
+			<img src="${new URL(`images/scrimbalogo.png`, import.meta.url)}" class="profile-pic">
 			<textarea data-text-reply="${tweet.uuid}" placeholder="Tweet your reply" class="reply-input"></textarea>
             <button data-reply-btn="${tweet.uuid}" class="reply-btn">Reply</button>
 		</div>
